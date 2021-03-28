@@ -5,6 +5,6 @@ fn main() {
 	
 	let v1 = V2::new(4,8);
 	
-	println!("{}", v1 * V2::new(2, 2));
+	println!("{}", (-v1) % V2::new(2,3));
 	
 }

@@ -58,6 +58,20 @@ where
     }
 }
 
+impl<XT, YT> ops::Neg for Vec2<XT,YT>
+where
+    XT: ops::Neg,
+    YT: ops::Neg
+{
+    type Output = Vec2<XT::Output, YT::Output>;
+    fn neg(self) -> Self::Output {
+        Self::Output {
+            x: -self.x,
+            y: -self.y
+        }
+    }
+}
+
 impl<XT, YT> ops::Sub for Vec2<XT, YT>
 where
     XT: ops::Sub,
@@ -130,6 +144,31 @@ where
     fn div_assign(&mut self, rhs: Self) {
         self.x /= rhs.x;
         self.y /= rhs.y;
+    }
+}
+
+impl<XT, YT> ops::Rem for Vec2<XT, YT>
+where
+    XT: ops::Rem,
+    YT: ops::Rem
+{
+    type Output = Vec2<XT::Output, YT::Output>;
+    fn rem(self, rhs: Self) -> Self::Output {
+        Self::Output {
+            x: self.x % rhs.x,
+            y: self.y % rhs.y
+        }
+    }
+}
+
+impl<XT, YT> ops::RemAssign for Vec2<XT, YT>
+where
+    XT: ops::RemAssign,
+    YT: ops::RemAssign
+{
+    fn rem_assign(&mut self, rhs: Self) {
+        self.x %= rhs.x;
+        self.y %= rhs.y;
     }
 }
 
