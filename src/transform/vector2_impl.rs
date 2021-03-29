@@ -10,29 +10,31 @@ mod vector2_impl {
 		use super::Vector2;
 
 		impl<XT, YT> Vector2<XT, YT> {
+			/// Construct a vector, specifying the x and y axies.
 			pub fn new(x: XT, y: YT) -> Self {
 				Self { x, y }
 			}
 		}
 
 		impl<T> Vector2<T, T> {
-			pub fn iso(n: T) -> Self
+			/// Construct a vector both of whose axies are 'n'.
+			pub fn from(n: T) -> Self
 			where
-				T: Copy,
+				T: Clone,
 			{
-				Self { x: n, y: n }
+				Self { x: n.clone(), y: n }
 			}
 		}
 
 		impl<XT, YT> std::default::Default for Vector2<XT, YT>
 		where
-			XT: std::convert::From<u8>,
-			YT: std::convert::From<u8>,
+			XT: std::default::Default,
+			YT: std::default::Default,
 		{
 			fn default() -> Self {
 				Self {
-					x: std::convert::From::from(0),
-					y: std::convert::From::from(0),
+					x: Default::default(),
+					y: Default::default(),
 				}
 			}
 		}
@@ -68,26 +70,54 @@ mod vector2_impl {
 			YT: Mul,
 			<XT as Mul>::Output: Add<<YT as Mul>::Output>,
 		{
+			/// Obtain the dot product between this and another vector
 			pub fn dot(
-				self,
-				other: Self,
+				&self,
+				other: &Self,
 			) -> <<XT as Mul>::Output as Add<<YT as Mul>::Output>>::Output {
 				(self.x * other.x) + (self.y * other.y)
 			}
 
-			pub fn mag2(self) -> <<XT as Mul>::Output as Add<<YT as Mul>::Output>>::Output
+			/// Obtain the magnitude of this vector squared, to avoid undoing the square root where only the scale of the scalar value is important
+			pub fn mag2(&self) -> <<XT as Mul>::Output as Add<<YT as Mul>::Output>>::Output
 			where
 				Self: Clone,
 			{
 				self.clone().dot(self)
 			}
 
+			/// Obtain the magtnidue of this vector.
 			pub fn mag(self) -> f64
 			where
 				<<XT as Mul>::Output as Add<<YT as Mul>::Output>>::Output: std::convert::Into<f64>,
 				Self: Clone,
 			{
 				(self.mag2().into()).sqrt()
+			}
+			/**
+			cardinal() const
+            {
+                    const Vector2   abs{    std::abs(x),
+                                                            std::abs(y)                     };
+
+                    Vector2                 out{    (x >= 0) - (x <= 0),
+                                                            (y >= 0) - (y <= 0)     };
+
+                    out.x *= (abs.x >= abs.y);
+                    out.y *= (abs.x <= abs.y);
+
+                    return out;
+            }
+			 */
+			/// Obtain the vector aligned between this one and the closest vector whose angle is divisible by 45 in degrees
+			pub fn cardinal(&self) -> Vector2<XT, YT>
+			where
+			{
+				let abs = Self {
+					x: self.x.abs(),
+					y: self.y.abs(),
+				};
+				abs
 			}
 		}
 	}
@@ -327,3 +357,6 @@ mod vector2_impl {
 }
 
 pub use vector2_impl::Vector2;
+pub use vector2_impl::ctrs;
+pub use vector2_impl::vec_ops;
+pub use vector2_impl::display_impl;
