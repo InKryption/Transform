@@ -11,10 +11,12 @@ impl<XT, YT> Vec2<XT, YT> {
     pub fn new(x: XT, y: YT) -> Vec2<XT, YT> {
         Vec2 { x, y }
     }
+}
 
-    pub fn iso<T>(n: T) -> Vec2<T>
+impl<T> Vec2<T, T> {
+    pub fn iso(n: T) -> Vec2<T,T>
     where
-        T: Copy,
+        T: Copy
     {
         Vec2 { x: n, y: n }
     }
@@ -33,6 +35,19 @@ where
     }
 }
 
+impl<XT, YT> Clone for Vec2<XT, YT>
+where
+    XT: Clone,
+    YT: Clone
+{
+    fn clone(&self) -> Vec2<XT, YT> {
+        Vec2 { x: self.x.clone(), y: self.y.clone() }
+    }
+}
+
+impl<XT, YT> Copy for Vec2<XT, YT>
+where XT: Copy, YT: Copy {}
+
 impl<XT, YT> ops::Add for Vec2<XT, YT>
 where
     XT: ops::Add,
@@ -47,6 +62,19 @@ where
     }
 }
 
+impl<T> ops::Add<T> for Vec2<T,T>
+where
+    T: ops::Add + Clone
+{
+    type Output = Vec2<T::Output, T::Output>;
+    fn add(self, rhs: T) -> Self::Output {
+        Self::Output {
+            x: self.x + rhs.clone(),
+            y: self.y + rhs,
+        }
+    }
+}
+
 impl<XT, YT> ops::AddAssign for Vec2<XT, YT>
 where
     XT: ops::AddAssign,
@@ -55,6 +83,16 @@ where
     fn add_assign(&mut self, rhs: Self) {
         self.x += rhs.x;
         self.y += rhs.y;
+    }
+}
+
+impl<T> ops::AddAssign for Vec2<T,T>
+where
+    T: ops::AddAssign + Clone
+{
+    fn add_assign(&mut self, rhs: T) {
+        self.x += rhs.clone();
+        self.y += rhs;
     }
 }
 
@@ -83,6 +121,28 @@ where
             x: self.x - rhs.x,
             y: self.y - rhs.y,
         }
+    }
+}
+
+impl<T> ops::Sub for Vec2<T, T>
+where
+    T: ops::Sub + Clone
+{
+    fn sub(self, rhs: T) -> Self::Output {
+        Self::Output {
+            x: self.x - rhs.clone(),
+            y: self.x - rhs
+        }
+    }
+}
+
+impl<T> ops::SubAssign for Vec2<T, T>
+where
+    T: ops::SubAssign + Clone
+{
+    fn sub_assign(&mut self, rhs: T) {
+        self.x -= rhs.clone();
+        self.y -= rhs;
     }
 }
 
